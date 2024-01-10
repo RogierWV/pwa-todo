@@ -1,9 +1,10 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getFirestore, onSnapshot, doc, getDoc, updateDoc, deleteField} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -20,43 +21,41 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const database = getDatabase(app);
-const todoRef = ref(database, "todo");
-const connectedRef = ref(database, ".info/connected");
+// const analytics = getAnalytics(app);
+const database = getFirestore(app);
+const todoRef = doc(database, "todo", "todo");
+// const connectedRef = ref(database, ".info/connected");
 
 const list = document.getElementById("todo");
 const input = document.getElementById("newInput");
 function createItem({title, done}) {
     let li = document.createElement("li")
-    li.appendChild(document.createTextNode(title))
-    if(done) li.classList.add("done");
-    li.addEventListener('click', () => {
-        get(ref(database, `todo/${title}`)).then(snap => {
-            if(snap.exists()) {
-                return set(ref(database, `todo/${title}`), !snap.val());
-            } else {
-                return set(ref(database, `todo/${title}`), false);
-            }
-        }).then(() => {
-            console.log(`Set ${title}`);
-        }).catch(e => {
-            console.error(`Failed to set ${title}: ${e}`);
-        });
+    let a = document.createElement('button');
+    a.appendChild(document.createTextNode(" 🗑 "))
+    a.addEventListener('click', () => {
+        updateDoc(todoRef, {[title]:deleteField()}).then(() => console.log(`${title} deleted`));
+    })
+    li.appendChild(a);
+    let span = document.createElement('span');
+    span.appendChild(document.createTextNode(title));
+    span.addEventListener('click', () => {
+        getDoc(todoRef).then(doc => {
+            if(doc.exists)
+                return updateDoc(todoRef,{[title]: !doc.data()[title]});
+        })
+        .then(() => console.log(`Set ${title}`))
+        .catch(e => console.error(`Failed to set ${title}: ${e}`));
     });
+    li.appendChild(span);
+    if(done) li.classList.add("done");
     return li;
 }
 
-function addItem() {
+async function addItem() {
     let text = input.value;
     if(text) {
-        get(ref(database, `todo/${text}`)).then(snap => {
-            if(!snap.exists()) {
-                input.value = "";
-                set(ref(database, `todo/${text}`), false).then(() => console.log(`Set ${text}`));
-            }
-        })
-        
+        input.value = "";
+        await updateDoc(todoRef, {[text]: false});
     }
 }
 
@@ -76,19 +75,13 @@ window.onload = function() {
         console.error("Service workers are not supported.");
     }
 
-    onValue(todoRef, (snapshot) => {
-        if(snapshot.exists()) {
+    onSnapshot(todoRef, doc => {
+        if(doc.data()) {
             list.innerHTML = "";
-            for(const [key,value] of Object.entries(snapshot.val())) {
-                list.appendChild(createItem({title: key, done: value}));
-            }
+            for (const [k,v] of Object.entries(doc.data()).sort()) 
+                list.appendChild(createItem({title:k, done:v}));
         }
     });
-    onValue(connectedRef, snapshot => {
-        if(snapshot.val())
-            console.log("Connected to Firebase!");
-        else
-            console.log("Disconnected from Firebase!");
-    });
+
     document.getElementById("newButton").addEventListener("click", addItem);
 }
