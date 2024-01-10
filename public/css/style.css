@@ -1,3 +1,7 @@
+ul li {
+    list-style-type: none;
+}
+
 ul li.done {
-    text-decoration: line-through;
+    list-style-type: "✓ ";
 }
