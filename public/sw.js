@@ -26,7 +26,7 @@ self.addEventListener('fetch', (event) => {
      // if (request.cache === 'only-if-cached' && request.mode !== 'same-origin')
      //      return // potential Chrome bug, preventive measures
 
-     event.respondWith(async function() {
+     event.respondWith(//async function() {
           // const cache = await caches.open(cacheName);
           // const cachedPromise = await cache.match(request);
           // let fetchPromise = fetch(request);
@@ -60,6 +60,6 @@ self.addEventListener('fetch', (event) => {
                     return fetch(request);
                }
           })
-     }()
+     //}()
      );
 });
