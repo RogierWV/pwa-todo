@@ -53,6 +53,7 @@ self.addEventListener('fetch', (event) => {
                          .then((res) => {return {c:caches.open(cacheName), r:res}})
                          .then(({c,r}) => {if(r.ok) c.put(request, r)})
                          .then(() => console.log(`cache updated for ${request}`))
+                         .catch(e => console.error(`failed to update cache for ${request}`));
                     return cachedResponse;
                } else {
                     console.log(`${request.url} shall be fetched...`);
