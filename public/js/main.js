@@ -36,6 +36,7 @@ const input = document.getElementById("newInput");
 function createItem({ title, done }) {
     let li = document.createElement("li")
     li.classList.add('todo-item');
+    
     let a = document.createElement('button');
     a.appendChild(document.createTextNode(" 🗑 "))
     a.addEventListener('click', () => {
@@ -58,6 +59,7 @@ function createItem({ title, done }) {
             .then(() => console.log(`Set ${title}`))
             .catch(e => console.error(`Failed to set ${title}: ${e}`));
     });
+
     li.appendChild(check);
     li.appendChild(span);
     li.appendChild(a);
