@@ -28,17 +28,18 @@ self.addEventListener('fetch', (event) => {
      // if (request.cache === 'only-if-cached' && request.mode !== 'same-origin')
      //      return // potential Chrome bug, preventive measures
 
-     event.respondWith(//async function() {
-          // const cache = await caches.open(cacheName);
-          // const cachedPromise = await cache.match(request);
-          // let fetchPromise = fetch(request);
+     event.respondWith(async function() {
+          const cache = await caches.open(cacheName);
+          const cachedPromise = await cache.match(request);
+          let fetchPromise = fetch(request);
 
-          // if(request.url.startsWith(self.location.origin)) {
-          //      event.waitUntil(async function() {
-          //           const fetchResponse = await fetchPromise;
-          //           await cache.put(request, fetchResponse.clone());
-          //      }());
-          // } else if (cacheables.includes(request.url)) {
+          if(request.url.startsWith(self.location.origin)) {
+               event.waitUntil(async function() {
+                    const fetchResponse = await fetchPromise;
+                    await cache.put(request, fetchResponse.clone());
+               }());
+          } 
+          // else if (cacheables.includes(request.url)) {
           //      event.waitUntil(async function() {
           //           fetchPromise = fetch(new Request(request.url, {mode: 'no-cors'}));
           //           fetchResponse = await fetchPromise;
@@ -46,22 +47,22 @@ self.addEventListener('fetch', (event) => {
           //      }());
           // }
 
-          // return cachedPromise || fetchPromise;
+          return cachedPromise || fetchPromise;
 
-          caches.match(request).then((cachedResponse) => {
-               if (cachedResponse) {
-                    console.log(`${request.url} loaded from cache`);
-                    // fetch(request)
-                    //      .then((res) => {return {c:caches.open(cacheName), r:res}})
-                    //      .then(({c,r}) => {if(r.ok) c.put(request, r)})
-                    //      .then(() => console.log(`cache updated for ${request}`))
-                    //      .catch(e => console.error(`failed to update cache for ${request}: ${e}`));
-                    return cachedResponse;
-               } else {
-                    console.log(`${request.url} shall be fetched...`);
-                    return fetch(request);
-               }
-          })
-     //}()
+          // caches.match(request).then((cachedResponse) => {
+          //      if (cachedResponse) {
+          //           console.log(`${request.url} loaded from cache`);
+          //           // fetch(request)
+          //           //      .then((res) => {return {c:caches.open(cacheName), r:res}})
+          //           //      .then(({c,r}) => {if(r.ok) c.put(request, r)})
+          //           //      .then(() => console.log(`cache updated for ${request}`))
+          //           //      .catch(e => console.error(`failed to update cache for ${request}: ${e}`));
+          //           return cachedResponse;
+          //      } else {
+          //           console.log(`${request.url} shall be fetched...`);
+          //           return fetch(request);
+          //      }
+          // })
+     }()
      );
 });
