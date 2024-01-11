@@ -29,7 +29,7 @@ self.addEventListener('fetch', (event) => {
           const cachedPromise = await cache.match(request);
           const fetchPromise = fetch(request);
 
-          if(request.url.startsWith(self.location.origin)) {
+          if(request.url.startsWith(self.location.origin) || cacheables.includes(request.url)) {
                event.waitUntil(async function() {
                     const fetchResponse = await fetchPromise;
                     await cache.put(request, fetchResponse.clone());
