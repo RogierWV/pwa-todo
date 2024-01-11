@@ -4,6 +4,8 @@ const cacheables = [
      '/index.html',
      '/css/style.css',
      '/js/main.js',
+     '/js/lib/firebase-app.js',
+     '/js/lib/firebase-firestore.js'
      // 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js',
      // 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'
 ];
