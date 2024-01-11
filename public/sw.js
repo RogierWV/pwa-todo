@@ -10,7 +10,9 @@ const cacheables = [
 
 self.addEventListener('install', (event) => {
      console.log("Service worker installed!");
-     event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(cacheables)));
+     event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(cacheables.map((url) => {
+          return new Request(url, url.startsWith('https://www.gstatic.com')?{mode: 'no-cors'}:{})
+     }))));
 });
 
 self.addEventListener('activate', (event) => {
@@ -27,11 +29,17 @@ self.addEventListener('fetch', (event) => {
      event.respondWith(async function() {
           const cache = await caches.open(cacheName);
           const cachedPromise = await cache.match(request);
-          const fetchPromise = fetch(request);
+          let fetchPromise = fetch(request);
 
-          if(request.url.startsWith(self.location.origin) || cacheables.includes(request.url)) {
+          if(request.url.startsWith(self.location.origin)) {
                event.waitUntil(async function() {
                     const fetchResponse = await fetchPromise;
+                    await cache.put(request, fetchResponse.clone());
+               }());
+          } else if (cacheables.includes(request.url)) {
+               event.waitUntil(async function() {
+                    fetchPromise = fetch(new Request(request.url, {mode: 'no-cors'}));
+                    fetchResponse = await fetchPromise;
                     await cache.put(request, fetchResponse.clone());
                }());
           }
