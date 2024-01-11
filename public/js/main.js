@@ -30,13 +30,21 @@ const list = document.getElementById("todo");
 const input = document.getElementById("newInput");
 function createItem({title, done}) {
     let li = document.createElement("li")
+    li.classList.add('todo-item');
     let a = document.createElement('button');
     a.appendChild(document.createTextNode(" 🗑 "))
     a.addEventListener('click', () => {
-        updateDoc(todoRef, {[title]:deleteField()}).then(() => console.log(`${title} deleted`));
+        updateDoc(todoRef, {[title]: deleteField()})
+        .then(() => console.log(`${title} deleted`));
     })
-    li.appendChild(a);
-    let span = document.createElement('span');
+    
+    let check = document.createElement("input");
+    check.type = "checkbox"
+    if(done) check.checked = "checked";
+    // check.disabled = true;
+    check.onclick = () => false; //looks prettier than disabling
+    
+    let span = document.createElement('label');
     span.appendChild(document.createTextNode(title));
     span.addEventListener('click', () => {
         getDoc(todoRef).then(doc => {
@@ -46,8 +54,10 @@ function createItem({title, done}) {
         .then(() => console.log(`Set ${title}`))
         .catch(e => console.error(`Failed to set ${title}: ${e}`));
     });
+    li.appendChild(check);
     li.appendChild(span);
-    if(done) li.classList.add("done");
+    li.appendChild(a);
+    // if(done) li.classList.add("done");
     return li;
 }
 

@@ -3,7 +3,7 @@
     "short_name": "TodoPWA",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#fff",
+    "background_color": "#f4f4f4",
     "description": "Simple todo app as PWA",
     "icons": [
         {
