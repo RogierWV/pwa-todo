@@ -1,5 +1,5 @@
 const cacheName = 'cache-v1';
-const CACHE_NAME = [
+const cacheables = [
      '/',
      '/index.html',
      '/css/style.css',
@@ -8,7 +8,7 @@ const CACHE_NAME = [
 
 self.addEventListener('install', (event) => {
      console.log("Service worker installed!");
-     event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(CACHE_NAME)));
+     event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(cacheables)));
 });
 
 self.addEventListener('activate', (event) => {
@@ -23,7 +23,7 @@ self.addEventListener('fetch', (event) => {
      //      return // potential Chrome bug, preventive measures
 
      event.respondWith(async function() {
-          const cache = await caches.open(CACHE_NAME);
+          const cache = await caches.open(cacheName);
           const cachedPromise = await cache.match(request);
           const fetchPromise = fetch(request);
 
