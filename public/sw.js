@@ -10,10 +10,10 @@ const cacheables = [
 
 self.addEventListener('install', (event) => {
      console.log("Service worker installed!");
-     event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(cacheables.map((url) => {
-          return new Request(url, url.startsWith('https://www.gstatic.com')?{mode: 'no-cors'}:{})
-     }))));
-});
+     event.waitUntil(caches.open(cacheName).then((cache) => cache.addAll(cacheables)))});//.map((url) => {
+          // return new Request(url, url.startsWith('https://www.gstatic.com')?{mode: 'no-cors'}:{})
+     // }))));
+// });
 
 self.addEventListener('activate', (event) => {
      console.log("Service worker activate event");
