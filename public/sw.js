@@ -4,8 +4,8 @@ const cacheables = [
      '/index.html',
      '/css/style.css',
      '/js/main.js',
-     'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js',
-     'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js'
+     '/js/firebase-app.js',
+     '/js/firebase-firestore.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -29,7 +29,7 @@ self.addEventListener('fetch', (event) => {
           const cachedPromise = await cache.match(request);
           const fetchPromise = fetch(request);
 
-          if(request.url.startsWith(self.location.origin) || request.url in cacheables) {
+          if(request.url.startsWith(self.location.origin)) {
                event.waitUntil(async function() {
                     const fetchResponse = await fetchPromise;
                     await cache.put(request, fetchResponse.clone());
