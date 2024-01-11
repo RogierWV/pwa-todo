@@ -3,7 +3,6 @@ import { initializeApp } from "/js/lib/firebase-app.js";
 // import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-// import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getFirestore, onSnapshot, doc, getDoc, updateDoc, deleteField, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } 
     from '/js/lib/firebase-firestore.js';
 
@@ -26,12 +25,11 @@ const app = initializeApp(firebaseConfig);
 initializeFirestore(app,
     {
         localCache:
-            persistentLocalCache(/*settings*/{ tabManager: persistentMultipleTabManager() })
+            persistentLocalCache({ tabManager: persistentMultipleTabManager() })
     });
 
 const database = getFirestore(app);
 const todoRef = doc(database, "todo", "todo");
-// const connectedRef = ref(database, ".info/connected");
 
 const list = document.getElementById("todo");
 const input = document.getElementById("newInput");
@@ -48,7 +46,6 @@ function createItem({ title, done }) {
     let check = document.createElement("input");
     check.type = "checkbox"
     if (done) check.checked = "checked";
-    // check.disabled = true;
     check.onclick = () => false; //looks prettier than disabling
 
     let span = document.createElement('label');
@@ -64,7 +61,6 @@ function createItem({ title, done }) {
     li.appendChild(check);
     li.appendChild(span);
     li.appendChild(a);
-    // if(done) li.classList.add("done");
     return li;
 }
 
