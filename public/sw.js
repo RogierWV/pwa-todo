@@ -51,7 +51,7 @@ self.addEventListener('fetch', (event) => {
                     console.log(`${request.url} loaded from cache`);
                     fetch(request)
                          .then((res) => {return {c:caches.open(cacheName), r:res}})
-                         .then(({c,r}) => c.put(request, r))
+                         .then(({c,r}) => {if(r.ok) c.put(request, r)})
                          .then(() => console.log(`cache updated for ${request}`))
                     return cachedResponse;
                } else {
